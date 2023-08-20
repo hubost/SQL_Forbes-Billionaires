@@ -23,9 +23,9 @@ CREATE TABLE IF NOT EXISTS public.billionaires
     wealth_status text COLLATE pg_catalog."default"
 ) 
 
--- What is the biggest net_worth of all time
+-- What is the biggest net worth in the dataset?
 
-select net_worth,replace(substring(net_worth,1,3),'.','')::integer as net_worth_int from billionaires
+select year, full_name, age, net_worth,replace(substring(net_worth,1,3),'.','')::integer as net_worth_int from billionaires
 order by net_worth_int desc
 limit 1
  
@@ -55,15 +55,15 @@ order by billionaires_count desc
 
 -- How many of all billionaires are self-made?
 
-select count(*) as count, 'true' as type from billionaires
+select count(*) as count, 'true (self-made)' as type from billionaires
 where self_made = true
 union all
-select count(full_name) as count, 'false' as type from billionaires
-where self_made = false
+select count(full_name) as count, 'false (not self-made)' as type from billionaires
+where self_made = 
 
 -- Analysis of the ages group (18-26, 27-35, 36-44, 45-53, 53+)
 
-select '18-26 years' as age, avg(cast(replace(left(net_worth,3),'.','') as int))::integer as average_net_worth from billionaires
+select '18-26 years' as age, avg(cast(replace(left(net_worth,3),'.','') as int))::integer as average_net_worth_in_billions from billionaires
 where age between 18 and 26
     union
 select '27-35 years', avg(cast(replace(left(net_worth,3),'.','') as int))::integer from billionaires
