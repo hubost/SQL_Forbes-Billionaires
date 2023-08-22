@@ -1,0 +1,30 @@
+SELECT * FROM public.billionaires
+drop function show_bill_by_cat(category text, orderby text, selfmade boolean)
+
+create or replace function show_bill_by_tech(category text, selfmade boolean)
+returns table (fullname text, age_s integer, business_category_s text,networth integer, wealth_status_s text)
+language plpgsql
+as $$
+begin
+	IF (selfmade = false) THEN
+	return query
+	select full_name, age, business_category,replace(left(net_worth,3),'.','')::integer, wealth_status from billionaires 
+	where business_category ilike CONCAT('%',category,'%')
+	order by networth;
+	ELSIF (selfmade = true) THEN
+	return query
+	select full_name, age, business_category,replace(left(net_worth,3),'.','')::integer, wealth_status from billionaires 
+	where business_category ilike CONCAT('%',category,'%')
+	order by networth;
+	ELSE 
+	return query
+	select full_name, age, business_category, replace(left(net_worth,3),'.','')::integer,wealth_status from billionaires 
+	where business_category ilike CONCAT('%',category,'%')
+	order by networth;
+	
+	END IF;
+end;
+$$
+
+select * from show_bill_by_cat('Fashion',false)
+drop function show_bill_by_cat(category text, orderby text, selfmade boolean)
