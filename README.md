@@ -109,3 +109,32 @@ order by age<br>
 
 ![image](https://github.com/hubost/SQL_Forbes-Billionaires/assets/103451733/fc8c227b-2363-4a0b-93a6-58ea1936feb9)
 
+<h1> ▶️Functions </h1>
+<h2>Selecting billionaires by category ordered by net worth</h2>
+<h3>select * from show_bill_by_cat('Fashion',false)</h3>
+
+create or replace function show_bill_by_tech(category text, selfmade boolean)<br>
+returns table (fullname text, age_s integer, business_category_s text,networth integer, wealth_status_s text)<br>
+language plpgsql<br>
+as $$<br>
+begin<br>
+	IF (selfmade = false) THEN<br>
+	return query<br>
+	select full_name, age, business_category,replace(left(net_worth,3),'.','')::integer, wealth_status from billionaires <br>
+	where business_category ilike CONCAT('%',category,'%')<br>
+	order by networth;<br>
+	ELSIF (selfmade = true) THEN<br>
+	return query<br>
+	select full_name, age, business_category,replace(left(net_worth,3),'.','')::integer, wealth_status from billionaires <br>
+	where business_category ilike CONCAT('%',category,'%')<br>
+	order by networth;<br>
+	ELSE <br>
+	return query<br>
+	select full_name, age, business_category, replace(left(net_worth,3),'.','')::integer,wealth_status from billionaires <br>
+	where business_category ilike CONCAT('%',category,'%')<br>
+	order by networth;<br>
+	END IF;<br>
+end;
+$$
+![image](https://github.com/hubost/SQL_Forbes-Billionaires/assets/103451733/6021c3b5-b6df-43dd-a560-5eba024ad724)
+
