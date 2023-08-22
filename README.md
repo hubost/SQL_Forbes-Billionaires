@@ -113,7 +113,7 @@ order by age<br>
 <h2>Selecting billionaires by category ordered by net worth</h2>
 <h3>select * from show_bill_by_cat('Fashion',false)</h3>
 
-create or replace function show_bill_by_tech(category text, selfmade boolean)<br>
+create or replace function show_bill_by_cat(category text, selfmade boolean)<br>
 returns table (fullname text, age_s integer, business_category_s text,networth integer, wealth_status_s text)<br>
 language plpgsql<br>
 as $$<br>
@@ -134,7 +134,7 @@ begin<br>
 	where business_category ilike CONCAT('%',category,'%')<br>
 	order by networth;<br>
 	END IF;<br>
-end;
-$$
+end;<br>
+$$<br>
 ![image](https://github.com/hubost/SQL_Forbes-Billionaires/assets/103451733/6021c3b5-b6df-43dd-a560-5eba024ad724)
 
