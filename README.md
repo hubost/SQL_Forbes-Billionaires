@@ -138,7 +138,7 @@ end;<br>
 $$<br>
 ![image](https://github.com/hubost/SQL_Forbes-Billionaires/assets/103451733/6021c3b5-b6df-43dd-a560-5eba024ad724)
 
-<h2>Returning all net worths of billionaire over the years with sum./h2>
+<h2>Returning all net worths of billionaire over the years with sum.</h2>
 <h3>select * from find_billionaire('Musk')</h3>
 
 create or replace function find_billionaire (billionaire text)<br>
@@ -155,3 +155,19 @@ end;<br>
 $$	<br>
 
 ![image](https://github.com/hubost/SQL_Forbes-Billionaires/assets/103451733/cabec2da-4de9-47b6-9d78-e3e39fe14ef0)
+
+<h2>Returning the current age of billionaires.</h2>
+<h3>select * from check_age('Gates')</h3>
+create or replace function check_age (name text)<br>
+returns table (full_name2 text, birth date, age float) <br>
+language plpgsql<br>
+as $$<br>
+begin return query<br>
+select distinct full_name, birth_date, date_part('year',current_date) - date_part('year',birth_date) as current_age from billionaires<br>
+where full_name ilike concat('%',name,'%') and <br>
+	  date_part('year',birth_date) > 1950 and birth_date is not null ;<br>
+end;<br>
+$$<br>
+	
+![image](https://github.com/hubost/SQL_Forbes-Billionaires/assets/103451733/fe7247c5-6b6d-4129-adfa-f13bda803d9e)
+
