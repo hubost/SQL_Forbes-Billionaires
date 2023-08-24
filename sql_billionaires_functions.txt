@@ -28,3 +28,24 @@ $$
 
 select * from show_bill_by_cat('Fashion',false)
 drop function show_bill_by_cat(category text, orderby text, selfmade boolean)
+
+--Find_billionaire
+
+select * from billionaires
+drop function find_billionaire (billionaire text)
+
+select * from find_billionaire('Musk')
+
+create or replace function find_billionaire (billionaire text)
+returns table (full_name_r text, year_r integer, net_worth_r integer, sum numeric) 
+language plpgsql
+as $$
+begin
+return query select full_name, year, replace(left(net_worth,3),'.','')::integer, sum(replace(left(net_worth,3),'.','')::numeric) OVER (PARTITION BY full_name ORDER BY year) from billionaires
+	where full_name ilike concat('%',billionaire,'%') 
+	group by full_name, year, net_worth
+	order by full_name;
+end;
+$$	
+
+select * from find_billionaire('Musk')
