@@ -49,3 +49,18 @@ end;
 $$	
 
 select * from find_billionaire('Musk')
+
+--check current age 
+
+create or replace function check_age (name text)
+returns table (full_name2 text, birth date, age float) 
+language plpgsql
+as $$
+begin return query
+select distinct full_name, birth_date, date_part('year',current_date) - date_part('year',birth_date) as current_age from billionaires
+where full_name ilike concat('%',name,'%') and 
+	  date_part('year',birth_date) > 1950 and birth_date is not null ;
+end;
+$$
+
+select * from check_age('Gates')
