@@ -119,22 +119,39 @@ language plpgsql<br>
 as $$<br>
 begin<br>
 	IF (selfmade = false) THEN<br>
-	return query<br>
-	select full_name, age, business_category,replace(left(net_worth,3),'.','')::integer, wealth_status from billionaires <br>
-	where business_category ilike CONCAT('%',category,'%')<br>
-	order by networth;<br>
+		return query<br>
+		select full_name, age, business_category,replace(left(net_worth,3),'.','')::integer, wealth_status from billionaires <br>
+		where business_category ilike CONCAT('%',category,'%')<br>
+		order by networth;<br>
 	ELSIF (selfmade = true) THEN<br>
-	return query<br>
-	select full_name, age, business_category,replace(left(net_worth,3),'.','')::integer, wealth_status from billionaires <br>
-	where business_category ilike CONCAT('%',category,'%')<br>
-	order by networth;<br>
+		return query<br>
+		select full_name, age, business_category,replace(left(net_worth,3),'.','')::integer, wealth_status from billionaires <br>
+		where business_category ilike CONCAT('%',category,'%')<br>
+		order by networth;<br>
 	ELSE <br>
-	return query<br>
-	select full_name, age, business_category, replace(left(net_worth,3),'.','')::integer,wealth_status from billionaires <br>
-	where business_category ilike CONCAT('%',category,'%')<br>
-	order by networth;<br>
+		return query<br>
+		select full_name, age, business_category, replace(left(net_worth,3),'.','')::integer,wealth_status from billionaires <br>
+		where business_category ilike CONCAT('%',category,'%')<br>
+		order by networth;<br>
 	END IF;<br>
 end;<br>
 $$<br>
 ![image](https://github.com/hubost/SQL_Forbes-Billionaires/assets/103451733/6021c3b5-b6df-43dd-a560-5eba024ad724)
 
+<h2>Returning all net worths of billionaire over the years with sum./h2>
+<h3>select * from find_billionaire('Musk')</h3>
+
+create or replace function find_billionaire (billionaire text)<br>
+returns table (full_name_r text, year_r integer, net_worth_r integer, sum numeric) <br>
+language plpgsql<br>
+as $$<br>
+begin<br>
+return query select full_name, year, replace(left(net_worth,3),'.','')::integer, 
+	sum(replace(left(net_worth,3),'.','')::numeric) OVER (PARTITION BY full_name ORDER BY year) from billionaires<br>
+		where full_name ilike concat('%',billionaire,'%') <br>
+		group by full_name, year, net_worth<br>
+		order by full_name;<br>
+end;<br>
+$$	<br>
+
+![image](https://github.com/hubost/SQL_Forbes-Billionaires/assets/103451733/cabec2da-4de9-47b6-9d78-e3e39fe14ef0)
